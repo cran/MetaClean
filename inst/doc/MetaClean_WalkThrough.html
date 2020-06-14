@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>Overview of MetaClean</title>
+
+<script type="text/javascript">
+window.onload = function() {
+  var imgs = document.getElementsByTagName('img'), i, img;
+  for (i = 0; i < imgs.length; i++) {
+    img = imgs[i];
+    // center an image if it is the only element of its parent
+    if (img.parentElement.childElementCount === 1)
+      img.parentElement.style.textAlign = 'center';
+  }
+};
+</script>
+
+<!-- Styles for R syntax highlighter -->
+<style type="text/css">
+   pre .operator,
+   pre .paren {
+     color: rgb(104, 118, 135)
+   }
+
+   pre .literal {
+     color: #990073
+   }
+
+   pre .number {
+     color: #099;
+   }
+
+   pre .comment {
+     color: #998;
+     font-style: italic
+   }
+
+   pre .keyword {
+     color: #900;
+     font-weight: bold
+   }
+
+   pre .identifier {
+     color: rgb(0, 0, 0);
+   }
+
+   pre .string {
+     color: #d14;
+   }
+</style>
+
+<!-- R syntax highlighter -->
+<script type="text/javascript">
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 13px;
+}
+
+body {
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 20px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 {
+   font-size:2.2em;
+}
+
+h2 {
+   font-size:1.8em;
+}
+
+h3 {
+   font-size:1.4em;
+}
+
+h4 {
+   font-size:1.0em;
+}
+
+h5 {
+   font-size:0.9em;
+}
+
+h6 {
+   font-size:0.8em;
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre, img {
+  max-width: 100%;
+}
+pre {
+  overflow-x: auto;
+}
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code {
+  font-size: 92%;
+  border: 1px solid #ccc;
+}
+
+code[class] {
+  background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * {
+      background: transparent !important;
+      color: black !important;
+      filter:none !important;
+      -ms-filter: none !important;
+   }
+
+   body {
+      font-size:12pt;
+      max-width:100%;
+   }
+
+   a, a:visited {
+      text-decoration: underline;
+   }
+
+   hr {
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote {
+      padding-right: 1em;
+      page-break-inside: avoid;
+   }
+
+   tr, img {
+      page-break-inside: avoid;
+   }
+
+   img {
+      max-width: 100% !important;
+   }
+
+   @page :left {
+      margin: 15mm 20mm 15mm 10mm;
+   }
+
+   @page :right {
+      margin: 15mm 10mm 15mm 20mm;
+   }
+
+   p, h2, h3 {
+      orphans: 3; widows: 3;
+   }
+
+   h2, h3 {
+      page-break-after: avoid;
+   }
+}
+</style>
+
+
+
+</head>
+
+<body>
+<h1>Overview of MetaClean</h1>
+
+<p><code>MetaClean</code> is a package for building classifiers to identify low quality integrations in untargeted metabolomics data. It uses a combination of 12 peak quality metrics and 9 potential machine learning algorithms to build predictive models using user provided chromatographic data and associated labels. Once a predictive model has been built, it can be used to assign predictive labels and class probabilities to untargeted metabolomics datasets. The package is designed for use with the preprocessing package XCMS and can be easily integrated into existing untargeted metabolomics pipelines.</p>
+
+<h1>How to use MetaClean</h1>
+
+<p><code>MetaClean</code> has two main use cases: (1) Training a Classifier Using User Provdied Data and (2) Using Existing Models to Make Predictions. This tutorial will walk the user through the steps for each.</p>
+
+<p>!!IMPORTANT!!
+While any version of XCMS&#39;s peak-picking, retention time correction, and grouping functions may be utilized, this package requires the user to provide two objects produced by the getEIC() and fillPeaks() functions. These functions require objects of the &ldquo;xcmsSet&rdquo; class which was replaced by the &ldquo;XCMSnExp&rdquo; class. If using the newest functions provided by XCMS, please convert the &ldquo;XCMSnExp&rdquo; object to an &ldquo;xcmsSet&rdquo; object using as(XCMSnExp_object, &ldquo;xcmsSet&rdquo;).</p>
+
+<h2>Part 1: Training a Classifier Using User Provided Data</h2>
+
+<p>This section explains how to build a classifier using data provided by the user. It is recommended that users create classifiers specific to the mode, matrix, and instrumentation of the dataset for those methodologies that are frequently utilized by the lab. For example, if a lab often runs plasma samples in Reverse Phase Negative Mode using the same column and the same instrument, a classifier can be built once using a dataset gerneated with this method and then saved and used again and again to make predictions for every additional run that uses this methodology.</p>
+
+<p>Before the classifier can be trained the user must invest some time in visually assesing and labeling at least two datasets: a development dataset to be used for training and at least one test dataset to be used for evaluating the performance of the classifiers and selecting the best model. It is recommended that the user perform the following steps to prepare the development and test datasets:</p>
+
+<ul>
+<li>Randomly select 500 EICs (without replacement) from the dataset of interest to serve as the development dataset</li>
+<li>Randomly select an additional 500 EICs (without replacement) from the dataset of interest, assuring no overlap between the two sets of EICs, to serve as the test dataset</li>
+<li>For each dataset
+
+<ul>
+<li>Run fillPeaks() and getEIC() on the associated &ldquo;group&rdquo; object (convert to &ldquo;xcmsSet&rdquo; class first if necessary)</li>
+<li>Print out the plots for the 500 EICs using the xcmsEIC object produced by getEIC()</li>
+<li>Have an experty visually assess the quality of each integration and label as &ldquo;PASS&rdquo; or &ldquo;FAIL&rdquo;</li>
+</ul></li>
+</ul>
+
+<p>The following sections provide detailed explanations of the steps required in training a classifier using user provided data:</p>
+
+<ul>
+<li>Set Up*</li>
+<li>Get EvalObj*</li>
+<li>Calculate Peak Quality Metrics*</li>
+<li>Train Potential Classifiers</li>
+<li>Calcualte Evaluation Measures</li>
+<li>Compare Classifiers and Select Best Performing</li>
+<li>Train Final Classifier</li>
+<li>Make Predictions</li>
+<li>Save Model</li>
+</ul>
+
+<p>NOTE: The * denotes sections that require additional example data not included in the MetaClean package. Users can either provide their own fill and xcmsEIC objects or download and install the data package <code>MetaCleanData</code> using the following code:</p>
+
+<pre><code class="r">## UNCOMMENT THIS SECTION IF YOU WISH TO USE THE MetaCleanData DATA PACKAGE
+
+# # install devtools if not already installed
+# install.packages(&quot;devtools&quot;)
+
+# install the data package MetaCleanData from github
+# devtools::install_github(&quot;KelseyChetnik/MetaCleanData&quot;)
+
+# load MetaCleanData library
+# library(MetaCleanData)
+</code></pre>
+
+<p><code>MetaCleanData</code> provides fill and xcmsEIC objects for example development and test sets.</p>
+
+<h3>Set Up</h3>
+
+<p>To train a new classifier using <code>PeakQualityIntegration</code>, the user must provide these three data files for each dataset:</p>
+
+<ul>
+<li><strong>xcmsEIC object</strong>: Returned by the XCMS function getEIC(). Contains data for each chromatographic peak of interest.</li>
+<li><strong>fill object</strong>: Returend by the XCMS function fillPeaks(). An xcmsSet object with filled in peak groups.
+-<strong>eic labels</strong>: A .csv file with the EICs of interest in the first column and the associated labels in the second column.</li>
+</ul>
+
+<p>NOTE: The same group object must be used to produce both the xcmsEIC and fill objects.</p>
+
+<p>The following are examples of the required xcmsEIC and fill objects:</p>
+
+<pre><code class="r">## UNCOMMENT THIS CODE IF YOU HAVE INSTALLED MetaCleanData
+
+# # load the example xcms
+# data(&quot;eicLabels_development&quot;)
+# data(&quot;eicLabels_test&quot;)
+# data(&quot;fill_development&quot;)
+# data(&quot;fill_test&quot;)
+# data(&quot;xs_development&quot;)
+# data(&quot;xs_test&quot;)
+</code></pre>
+
+<p>The following is are examples </p>
+
+<p>These examples will be utilized throughout the remainder of the tutorial.</p>
+
+<h3>Get EvalObj</h3>
+
+<p>The function <code>getEvalObj</code> is called to extract the relevant data from the three objects provided by ther user and store them in an object of class <code>evalObj</code>. This function takes the following arguments:</p>
+
+<ul>
+<li><strong>xs</strong>: An xcmsEIC object returned by the getEIC() function from the XCMS package</li>
+<li><strong>fill</strong>: An xcmsSet object with filled in peak groups</li>
+</ul>
+
+<pre><code class="r">## UNCOMMENT THIS CODE IF YOU HAVE INSTALLED MetaCleanData
+
+# call getEvalObj on development data
+# eicEval_development &lt;- getEvalObj(xs = xs_development, fill = fill_development)
+
+# call getEvalObj on test data
+# eicEval_test &lt;- getEvalObj(xs = xs_test, fill = fill_test)
+</code></pre>
+
+<p>The <code>evalObj</code> has three slots:</p>
+
+<ul>
+<li><strong>eicPts</strong>: A list of 2D matrices containing the retention time and intensity values of each chromatographic peak</li>
+<li><strong>eicPeakData</strong>: A list of vectors for each sample in the group containing characteristic information about each chromatographic peak</li>
+<li><strong>eicNos</strong>: A numeric vector of the EIC numbers identifying each feature group</li>
+</ul>
+
+<h3>Calculate Peak Quality Metrics</h3>
+
+<p>The function <code>getPeakQualityMetrics</code> uses the <code>evalObj</code> objects to calculate each of the 12 peak quality metrics. These metrics are: Apex Max-Boundary Ratio, Elution Shift, FWHM2Base, Jaggedness, Modality, Retention-Time Consistency, Symmetry, Gaussian Similarity, Peak Signfiicance Level, Sharpness, Triangle Peak Area Similarity Ratio (TPASR), and Zig-Zag Index. See (our paper) for a description of each metric.
+This function takes the following arguments:</p>
+
+<ul>
+<li><strong>eicEvalData</strong>: An object of class evalObj containing the required chromatographic peak information</li>
+<li><strong>eicLabel_df</strong>: A dataframe with EICNos in the first column and Labels in the second column</li>
+<li><strong>flatness.factor</strong>: A numeric value between 0 and 1 that allows the user to adjust the sensitivity of the function to noise. This function calculates the difference between each adjacent pair of points; any value found to be less than flatness.factor * maximum intensity is set to 0. </li>
+</ul>
+
+<pre><code class="r">## UNCOMMENT THIS CODE IF YOU HAVE INSTALLED MetaCleanData
+
+# # calculate peak quality metrics for development dataset
+# # For 500 peaks and 89 samples, takes ~2.3 mins
+# pqMetrics_development &lt;- getPeakQualityMetrics(eicEvalData = eicEval_development, eicLabels_df = eicLabels_development)
+# 
+# # calculate peak quality metrics for test dataset
+# # For 500 peaks and 100 samples, takes ~2.6 mins
+# pqMetrics_test &lt;- getPeakQualityMetrics(eicEvalData = eicEval_test, eicLabels_df = eicLabels_test)
+</code></pre>
+
+<p>The <code>getPeakQualityMetrics</code> function returns an Mx14 matrix where M is equal to the number of peaks. There are 14 columns in total, including one column for each of the twelve metrics, one column for EIC numbers, and one column for the class label.</p>
+
+<p>This matrix serves as the input for the training the classifiers and making predictions.</p>
+
+<h3>Train Potential Classifiers</h3>
+
+<p><code>MetaClean</code> provides 9 classification algorithms (implemented with the R package <code>caret</code>) for building a predictive model. These are: Decision Tree, Naive Bayes, Logistic Regression, RandomForest, SVM_Linear, SVM_Radial, AdaBoost, Neural Netowrk, and Model-Averaged Neural Networks. The <code>trainClassifiers</code> function is a wrapper function that uses cross-validation to train a user-selected subset of the nine available algorithms. It takes the following arguments:</p>
+
+<ul>
+<li><strong>trainData</strong>: A dataframe where the rows correspond to peaks and columns should include peak quality metrics and class labels only.</li>
+<li><strong>k</strong>: Number of folds to be used in cross-validation</li>
+<li><strong>repNum</strong>: Number of cross-validation rounds to perform</li>
+<li><strong>rand.seed</strong>: State in which to set the random number generator</li>
+<li><strong>models</strong>: A character string or vector specifying the models to use. Specifies the classification algorithms to be trained from the nine available: DecisionTree, LogisiticRegression, NaiveBayes, RandomForest, SVM_Linear, SVM_Radial, AdaBoost, NeuralNetwork, and ModelAveragedNeuralNetwork. &ldquo;all&rdquo; specifies the use of all models. Default is &ldquo;all&rdquo;.</li>
+</ul>
+
+<pre><code class="r">## IF YOU HAVE INSTALLED MetaCleanData YOU CAN COMMENT OUT THIS CODE AND PROCEED WITH THE PEAK QUALITY METRIC TABLES GENERATED IN THE PREVIOUS SECTIONS
+
+data(&quot;pqMetrics_development&quot;)
+data(&quot;pqMetrics_test&quot;)
+</code></pre>
+
+<p><code>trainClassifiers</code> returns a list of lists. The outer list has one entry for every model trained. The inner list has two entries: the trained model and the name of the model trained.</p>
+
+<h3>Calculate Evaluation Measures</h3>
+
+<p>Once the potential models have been trained, the next step is to evaluate the performance of each to determine which is the best performing and should be selected as the classifier. To do this, we first generate the seven available evaluation measures: PosClass.FScore, PosClass.Precision, PosClass.Recall, NegClass.FScore, NegClass.Precision, NegClass.Recall, and Accuracy. We use the <code>getEvaluationMeasures</code> function to do this. This function takes the following arguments:</p>
+
+<ul>
+<li><strong>models</strong>: A list of trained models, like that returned by trainClassifiers()</li>
+<li><strong>k</strong>: Number of folds used in cross-validation</li>
+<li><strong>repNum</strong>: Number of cross-validation rounds</li>
+</ul>
+
+<pre><code class="r"># calculate all seven evaluation measures for each model and each round of cross-validation
+#evalMeasuresDF &lt;- getEvaluationMeasures(models=models, k=5, repNum=10)
+</code></pre>
+
+<p><code>getEvaluationMeasures</code> returns a dataframe with the following columns: Model, RepNum, PosClass.FScore, PosClass.Recall, PosClass.Precision, NegClass.FScore, NegClass.Recall, NegClass.Precision, and Accuracy. The rows of the dataframe will correspond to the results of a particular model and a particular round of cross-validation.</p>
+
+<h3>Compare Classifiers and Select Best Performing</h3>
+
+<p>The evaluation measures data frame can be used to assess the performance of each of the algorithms. The most convenient way to compare the performance of each is with visualizations. <code>MetaClean</code> provides a simple wrapper function to easily generate bar plot visualizations of the evaluation measures for each model. This is <code>makeBarPlots</code> which plots bar plots comparing each model across each of the evaluation measures. This function takes the following argument: </p>
+
+<ul>
+<li><strong>evalMeasuresDF</strong>: dataframe with the following columns: Model, RepNum, PosClass.FScore, PosClass.Recall, PosClass.Precision, NegClass.FScore, NegClass.Recall, NegClass.Precision, and Accuracy. The rows of the dataframe will correspond to the results of a particular model and a particular round of cross-validation.</li>
+<li><strong>emNames</strong>: list of names of the evaluation measures to visualize. Accepts the following: PosClass.FScore, PosClass.Recall, PosClass.Precision, NegClass.FScore, NegClass.Recall, NegClass.Precision, and Accuracy. Default is &ldquo;All&rdquo;.</li>
+</ul>
+
+<p>NOTE: When &ldquo;All&rdquo; is selected for emNames, the bar plots are returned in the same order as the names listed in the description.</p>
+
+<pre><code class="r"># generate bar plots for every
+#barPlots &lt;- makeBarPlots(evalMeasuresDF, emNames=&quot;All&quot;)
+
+#plot(barPlots[[1]]) # PASS.FScore
+#plot(barPlots[[4]]) # FAIL.FScore
+#plot(barPlots[[7]]) # Accuracy
+</code></pre>
+
+<p>These plots can help the user select the best perfomring classifier for the data. Of course, the user can also employ their own statistical tests on the evalMeasuresDF itself to determine which class</p>
+
+<h3>Train Final Classifier</h3>
+
+<p>Once the best perfomring model has been selected, the user can train the algorithm using all of the available training data and the optimized hyperparameters for the algorithm determined by training, to create the final classifier. </p>
+
+<pre><code class="r"># best performing model for example development set, rand.seed = 453, k = 5, repNum = 10 is AdaBoost
+
+#trainData &lt;- pqMetrics_development[,-c(1)]
+#trControl &lt;- trainControl(method = &quot;none&quot;, savePredictions = &#39;final&#39;, classProbs=TRUE)
+
+#seed &lt;- 453
+##set.seed(seed)
+#best_model &lt;- train(Class~., trainData,
+#                   method=&quot;adaboost&quot;,
+#                   trControl=trControl,
+#                   tuneGrid=data.frame(nIter=150, method=&quot;Adaboost.M1&quot;) # list hyperparameters optimized for the algorithm
+#                   )
+</code></pre>
+
+<h3>Make Predictions</h3>
+
+<p>The user can make predictions on new data using the final classifier using the predict() function from <code>caret</code> as demonstrated below:</p>
+
+<pre><code class="r"># return prediction probabilities for test dataset
+#test_predictions_prob &lt;- predict(best_model, pqMetrics_test[,-c(1)], type=&quot;prob&quot;)
+# return class predictions for test dataset
+#test_predictions_class &lt;- predict(best_model, pqMetrics_test[,-c(1)])
+
+
+#test_predictions &lt;- cbind(&quot;Probabilities&quot;=test_predictions_prob, &quot;Class&quot;=test_predictions_class, &quot;EICNO&quot;=pqMetrics_test$EICNo)
+
+#test_evalMeasures &lt;- calculateEvaluationMeasures(pred=test_predictions_class, pqMetrics_test$Class)
+</code></pre>
+
+<h3>Save Model</h3>
+
+<p>This classifier can then be saved to a directory specified by the user so it can used as many times as desired.</p>
+
+<pre><code class="r"># uncomment the lines below and add path where you want to save trained model
+# model_path &lt;- &quot;&quot;
+# model_file &lt;- paste0(model_path, &quot;MyModel.rds&quot;)
+# saveRDS(best_model, file=model_file)
+</code></pre>
+
+<h2>Part 2: Using Existing Models to Make Predictions</h2>
+
+<p>The user can load any previously trained model (including the trained model from our publication available with package) and use it to make predictions on new data.</p>
+
+<h3>Load Saved Model</h3>
+
+<p>To load a prediction model, simply provide the path and use the base function readRDS().</p>
+
+<p>As an example, users who have downloaded the data package MetaCleanData can use the pre-trained model included with that package:</p>
+
+<pre><code class="r">## UNCOMMENT THIS CODE IF YOU HAVE INSTALLED MetaCleanData
+
+# # load model from MetaCleanData 
+# data(myModel)
+</code></pre>
+
+<h3>Make Predictions</h3>
+
+<p>The user can then make predictions using this model using the predict() function from <code>caret</code> as seen below:</p>
+
+<pre><code class="r">## UNCOMMENT THIS CODE IF YOU HAVE INSTALLED MetaCleanData
+
+# myModel_predictions_prob &lt;- predict(myModel, pqMetrics_test[,-c(1)], type=&quot;prob&quot;)
+# myModel_predictions_class &lt;- predict(myModel, pqMetrics_test[,-c(1)])
+# 
+# myModel_predictions &lt;- cbind(&quot;Probabilities&quot;=myModel_predictions_prob, &quot;Class&quot;=myModel_predictions_class, &quot;EICNO&quot;=pqMetrics_test$EICNo)
+# 
+</code></pre>
+
+</body>
+
+</html>
