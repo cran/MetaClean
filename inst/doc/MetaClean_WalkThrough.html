@@ -203,11 +203,11 @@ hr {
 <body>
 <h1>Overview of MetaClean</h1>
 
-<p><code>MetaClean</code> is a package for building classifiers to identify low quality integrations in untargeted metabolomics data. It uses a combination of 12 peak quality metrics and 9 potential machine learning algorithms to build predictive models using user provided chromatographic data and associated labels. Once a predictive model has been built, it can be used to assign predictive labels and class probabilities to untargeted metabolomics datasets. The package is designed for use with the preprocessing package XCMS and can be easily integrated into existing untargeted metabolomics pipelines.</p>
+<p><code>MetaClean</code> is a package for building classifiers to identify low quality integrations in untargeted metabolomics data. It uses a combination of 11 peak quality metrics and 8 potential machine learning algorithms to build predictive models using user provided chromatographic data and associated labels. Once a predictive model has been built, it can be used to assign predictive labels and class probabilities to untargeted metabolomics datasets. The package is designed for use with the preprocessing package XCMS and can be easily integrated into existing untargeted metabolomics pipelines.</p>
 
 <h1>How to use MetaClean</h1>
 
-<p><code>MetaClean</code> has two main use cases: (1) Training a Classifier Using User Provdied Data and (2) Using Existing Models to Make Predictions. This tutorial will walk the user through the steps for each.</p>
+<p><code>MetaClean</code> has two main use cases: (1) Training a Classifier Using User-Provdied Data and (2) Using Existing Models to Make Predictions. This tutorial will walk the user through the steps for each.</p>
 
 <p>!!IMPORTANT!!
 While any version of XCMS&#39;s peak-picking, retention time correction, and grouping functions may be utilized, this package requires the user to provide two objects produced by the getEIC() and fillPeaks() functions. These functions require objects of the &ldquo;xcmsSet&rdquo; class which was replaced by the &ldquo;XCMSnExp&rdquo; class. If using the newest functions provided by XCMS, please convert the &ldquo;XCMSnExp&rdquo; object to an &ldquo;xcmsSet&rdquo; object using as(XCMSnExp_object, &ldquo;xcmsSet&rdquo;).</p>
@@ -219,6 +219,7 @@ While any version of XCMS&#39;s peak-picking, retention time correction, and gro
 <p>Before the classifier can be trained the user must invest some time in visually assesing and labeling at least two datasets: a development dataset to be used for training and at least one test dataset to be used for evaluating the performance of the classifiers and selecting the best model. It is recommended that the user perform the following steps to prepare the development and test datasets:</p>
 
 <ul>
+<li>(Optionally) Use MetaClean::rsdFilter() to filter EICs with RSD greater than a user-provided threshold.</li>
 <li>Randomly select 500 EICs (without replacement) from the dataset of interest to serve as the development dataset</li>
 <li>Randomly select an additional 500 EICs (without replacement) from the dataset of interest, assuring no overlap between the two sets of EICs, to serve as the test dataset</li>
 <li>For each dataset
@@ -233,6 +234,7 @@ While any version of XCMS&#39;s peak-picking, retention time correction, and gro
 <p>The following sections provide detailed explanations of the steps required in training a classifier using user provided data:</p>
 
 <ul>
+<li>(Optional) RSD Filtering*</li>
 <li>Set Up*</li>
 <li>Get EvalObj*</li>
 <li>Calculate Peak Quality Metrics*</li>
@@ -240,7 +242,6 @@ While any version of XCMS&#39;s peak-picking, retention time correction, and gro
 <li>Calcualte Evaluation Measures</li>
 <li>Compare Classifiers and Select Best Performing</li>
 <li>Train Final Classifier</li>
-<li>Make Predictions</li>
 <li>Save Model</li>
 </ul>
 
@@ -258,11 +259,62 @@ While any version of XCMS&#39;s peak-picking, retention time correction, and gro
 # library(MetaCleanData)
 </code></pre>
 
-<p><code>MetaCleanData</code> provides fill and xcmsEIC objects for example development and test sets.</p>
+<p><code>MetaCleanData</code> provides example data for development and test sets.</p>
+
+<h3>(Optional) RSD Filtering</h3>
+
+<p>!!!IMPORTANT!!!
+If the user uses rsdFilter() for the development dataset all testing datasets should also be filtered before evaluated on the trained model.</p>
+
+<p>Before generating training data, the user can optionally filter out EICs by RSD % using the rsdFilter() function.</p>
+
+<p>The rsdFilter() function takes the following arguments:</p>
+
+<ul>
+<li><strong>peakTable</strong>: A peak table (like that returned by xcms::peakTable()) containing columns for EIC, mz, rt, samples, and quality 
+control samples.</li>
+<li><strong>eicColumn</strong>: Name of the EIC column.</li>
+<li><strong>rsdColumns</strong>: Vector of peakTable column names that correspond to quality control samples.</li>
+<li><strong>rsdThreshold</strong>: A value between 0-1 to serve as the RSD % threshold; default: 0.3.</li>
+</ul>
+
+<p>The function returns a peak table containing those EICs for which RSD is below the user-provided threshold. The following is an example of how to use the rsdFilter() function:</p>
+
+<pre><code class="r">## UNCOMMENT THIS CODE IF YOU HAVE INSTALLED GITHUB PACKAGE MetaCleanData
+
+# # load the example input data
+# # example development data
+# data(&quot;group_development&quot;)
+# data(&quot;covar_development&quot;)
+# 
+# # example test data
+# data(&quot;group_test&quot;)
+# data(&quot;covar_test&quot;)
+# 
+# peak_table_development &lt;- peakTable(group_development)
+# peak_table_development &lt;- cbind(EICNo=1:nrow(peak_table_development), peak_table_development)
+# development_rsd_names &lt;- as.character(covar_development[covar_development$SampleType==&quot;LQC&quot;,&quot;FileNames&quot;])
+# filtered_peak_table_development &lt;- rsdFilter(peakTable = peak_table_development,
+#                                              eicColumn = &quot;EICNo&quot;,
+#                                              rsdColumns = development_rsd_names,
+#                                              rsdThreshold = 0.3)
+# 
+# peak_table_test &lt;- peakTable(group_test)
+# peak_table_test &lt;- cbind(EICNo=1:nrow(peak_table_test), peak_table_test)
+# test_rsd_names &lt;- as.character(covar_test[covar_test$SampleType==&quot;LQC&quot;,&quot;FileNames&quot;])
+# filtered_peak_table_test &lt;- rsdFilter(peakTable = peak_table_test,
+#                                              eicColumn = &quot;EICNo&quot;,
+#                                              rsdColumns = test_rsd_names,
+#                                              rsdThreshold = 0.3)
+</code></pre>
+
+<p>After rsd filtering, the user can then proceed with randomly selecting and labeling EICs for training and then proceed with the steps outlined below. </p>
 
 <h3>Set Up</h3>
 
-<p>To train a new classifier using <code>PeakQualityIntegration</code>, the user must provide these three data files for each dataset:</p>
+<p>Note: All example data used below was made WITHOUT RSD filtering.</p>
+
+<p>To train a new classifier using <code>MetaClean</code>, the user must provide these three data files for each dataset:</p>
 
 <ul>
 <li><strong>xcmsEIC object</strong>: Returned by the XCMS function getEIC(). Contains data for each chromatographic peak of interest.</li>
@@ -274,18 +326,17 @@ While any version of XCMS&#39;s peak-picking, retention time correction, and gro
 
 <p>The following are examples of the required xcmsEIC and fill objects:</p>
 
-<pre><code class="r">## UNCOMMENT THIS CODE IF YOU HAVE INSTALLED MetaCleanData
+<pre><code class="r">## UNCOMMENT THIS CODE IF YOU HAVE INSTALLED GITHUB PACKAGE MetaCleanData
 
-# # load the example xcms
-# data(&quot;eicLabels_development&quot;)
-# data(&quot;eicLabels_test&quot;)
+# # load the example input data
+# # example development data
+# data(&quot;eic_labels_development&quot;)
 # data(&quot;fill_development&quot;)
-# data(&quot;fill_test&quot;)
 # data(&quot;xs_development&quot;)
+# # example test data
+# data(&quot;fill_test&quot;)
 # data(&quot;xs_test&quot;)
 </code></pre>
-
-<p>The following is are examples </p>
 
 <p>These examples will be utilized throughout the remainder of the tutorial.</p>
 
@@ -300,10 +351,10 @@ While any version of XCMS&#39;s peak-picking, retention time correction, and gro
 
 <pre><code class="r">## UNCOMMENT THIS CODE IF YOU HAVE INSTALLED MetaCleanData
 
-# call getEvalObj on development data
+# # call getEvalObj on development data
 # eicEval_development &lt;- getEvalObj(xs = xs_development, fill = fill_development)
-
-# call getEvalObj on test data
+# 
+# # call getEvalObj on test data
 # eicEval_test &lt;- getEvalObj(xs = xs_test, fill = fill_test)
 </code></pre>
 
@@ -317,7 +368,7 @@ While any version of XCMS&#39;s peak-picking, retention time correction, and gro
 
 <h3>Calculate Peak Quality Metrics</h3>
 
-<p>The function <code>getPeakQualityMetrics</code> uses the <code>evalObj</code> objects to calculate each of the 12 peak quality metrics. These metrics are: Apex Max-Boundary Ratio, Elution Shift, FWHM2Base, Jaggedness, Modality, Retention-Time Consistency, Symmetry, Gaussian Similarity, Peak Signfiicance Level, Sharpness, Triangle Peak Area Similarity Ratio (TPASR), and Zig-Zag Index. See (our paper) for a description of each metric.
+<p>The function <code>getPeakQualityMetrics</code> uses the <code>evalObj</code> objects to calculate each of the 11 peak quality metrics. These metrics are: Apex Max-Boundary Ratio, Elution Shift, FWHM2Base, Jaggedness, Modality, Retention-Time Consistency, Symmetry, Gaussian Similarity, Sharpness, Triangle Peak Area Similarity Ratio (TPASR), and Zig-Zag Index. See (our paper) for a description of each metric.
 This function takes the following arguments:</p>
 
 <ul>
@@ -330,40 +381,41 @@ This function takes the following arguments:</p>
 
 # # calculate peak quality metrics for development dataset
 # # For 500 peaks and 89 samples, takes ~2.3 mins
-# pqMetrics_development &lt;- getPeakQualityMetrics(eicEvalData = eicEval_development, eicLabels_df = eicLabels_development)
+# pqm_development &lt;- getPeakQualityMetrics(eicEvalData = eicEval_development, eicLabels_df = eic_labels_development)
 # 
 # # calculate peak quality metrics for test dataset
 # # For 500 peaks and 100 samples, takes ~2.6 mins
-# pqMetrics_test &lt;- getPeakQualityMetrics(eicEvalData = eicEval_test, eicLabels_df = eicLabels_test)
+# pqm_test &lt;- getPeakQualityMetrics(eicEvalData = eicEval_test)
 </code></pre>
 
-<p>The <code>getPeakQualityMetrics</code> function returns an Mx14 matrix where M is equal to the number of peaks. There are 14 columns in total, including one column for each of the twelve metrics, one column for EIC numbers, and one column for the class label.</p>
+<p>The <code>getPeakQualityMetrics</code> function returns an Mx13 or Mx12 matrix where M is equal to the number of peaks. There are 13 or 12 columns in total (depending on whether there are labels provided), including one column for each of the eleven metrics, one column for EIC numbers, and (optionally) one column for the class label.</p>
 
 <p>This matrix serves as the input for the training the classifiers and making predictions.</p>
 
 <h3>Train Potential Classifiers</h3>
 
-<p><code>MetaClean</code> provides 9 classification algorithms (implemented with the R package <code>caret</code>) for building a predictive model. These are: Decision Tree, Naive Bayes, Logistic Regression, RandomForest, SVM_Linear, SVM_Radial, AdaBoost, Neural Netowrk, and Model-Averaged Neural Networks. The <code>trainClassifiers</code> function is a wrapper function that uses cross-validation to train a user-selected subset of the nine available algorithms. It takes the following arguments:</p>
+<p><code>MetaClean</code> provides 8 classification algorithms (implemented with the R package <code>caret</code>) for building a predictive model. These are: Decision Tree, Naive Bayes, Logistic Regression, RandomForest, SVM_Linear, AdaBoost, Neural Netowrk, and Model-Averaged Neural Networks. The <code>runCrossValidation</code> function is a wrapper function that uses cross-validation to train a user-selected subset of the 8 available algorithms. It takes the following arguments:</p>
 
 <ul>
 <li><strong>trainData</strong>: A dataframe where the rows correspond to peaks and columns should include peak quality metrics and class labels only.</li>
 <li><strong>k</strong>: Number of folds to be used in cross-validation</li>
 <li><strong>repNum</strong>: Number of cross-validation rounds to perform</li>
 <li><strong>rand.seed</strong>: State in which to set the random number generator</li>
-<li><strong>models</strong>: A character string or vector specifying the models to use. Specifies the classification algorithms to be trained from the nine available: DecisionTree, LogisiticRegression, NaiveBayes, RandomForest, SVM_Linear, SVM_Radial, AdaBoost, NeuralNetwork, and ModelAveragedNeuralNetwork. &ldquo;all&rdquo; specifies the use of all models. Default is &ldquo;all&rdquo;.</li>
+<li><strong>models</strong>: A character string or vector specifying the models to use. Specifies the classification algorithms to be trained from the nine available: DecisionTree, LogisiticRegression, NaiveBayes, RandomForest, SVM_Linear, AdaBoost, NeuralNetwork, and ModelAveragedNeuralNetwork. Use c() to select multiple models. &ldquo;all&rdquo; specifies the use of all models. Default is &ldquo;all&rdquo;.</li>
+<li><strong>metricSet</strong>: The metric set(s) to be run with the selected model(s). Select from the following: M4, M7, and M11. Use c() to select multiple metrics. &ldquo;all&rdquo; specifics the use of all metrics. Default is &ldquo;M11&rdquo;.</li>
 </ul>
 
 <pre><code class="r">## IF YOU HAVE INSTALLED MetaCleanData YOU CAN COMMENT OUT THIS CODE AND PROCEED WITH THE PEAK QUALITY METRIC TABLES GENERATED IN THE PREVIOUS SECTIONS
 
-data(&quot;pqMetrics_development&quot;)
-data(&quot;pqMetrics_test&quot;)
+# data(&quot;pqm_development&quot;)
+# data(&quot;pqm_test&quot;)
 </code></pre>
 
-<p><code>trainClassifiers</code> returns a list of lists. The outer list has one entry for every model trained. The inner list has two entries: the trained model and the name of the model trained.</p>
+<p><code>runCrossValidation</code> returns a list of lists. The outer list has one entry for every model trained. The inner list has two entries: the trained model and the name of the model trained.</p>
 
 <h3>Calculate Evaluation Measures</h3>
 
-<p>Once the potential models have been trained, the next step is to evaluate the performance of each to determine which is the best performing and should be selected as the classifier. To do this, we first generate the seven available evaluation measures: PosClass.FScore, PosClass.Precision, PosClass.Recall, NegClass.FScore, NegClass.Precision, NegClass.Recall, and Accuracy. We use the <code>getEvaluationMeasures</code> function to do this. This function takes the following arguments:</p>
+<p>Once the potential models have been trained, the next step is to evaluate the performance of each to determine which is the best performing and should be selected as the classifier. To do this, we first generate the seven available evaluation measures: Pass_FScore, Pass_Precision, Pass_Recall, Fail_FScore, Fail_Precision, Fail_Recall, and Accuracy. We use the <code>getEvaluationMeasures</code> function to do this. This function takes the following arguments:</p>
 
 <ul>
 <li><strong>models</strong>: A list of trained models, like that returned by trainClassifiers()</li>
@@ -372,73 +424,58 @@ data(&quot;pqMetrics_test&quot;)
 </ul>
 
 <pre><code class="r"># calculate all seven evaluation measures for each model and each round of cross-validation
-#evalMeasuresDF &lt;- getEvaluationMeasures(models=models, k=5, repNum=10)
+# evalMeasuresDF &lt;- getEvaluationMeasures(models=models, k=5, repNum=10)
 </code></pre>
 
-<p><code>getEvaluationMeasures</code> returns a dataframe with the following columns: Model, RepNum, PosClass.FScore, PosClass.Recall, PosClass.Precision, NegClass.FScore, NegClass.Recall, NegClass.Precision, and Accuracy. The rows of the dataframe will correspond to the results of a particular model and a particular round of cross-validation.</p>
+<p><code>getEvaluationMeasures</code> returns a dataframe with the following columns: Model, RepNum, Pass_FScore, Pass_Recall, Pass_Precision, Fail_FScore, Fail_Recall, Fail_Precision, and Accuracy. The rows of the dataframe will correspond to the results of a particular model and a particular round of cross-validation.</p>
 
 <h3>Compare Classifiers and Select Best Performing</h3>
 
-<p>The evaluation measures data frame can be used to assess the performance of each of the algorithms. The most convenient way to compare the performance of each is with visualizations. <code>MetaClean</code> provides a simple wrapper function to easily generate bar plot visualizations of the evaluation measures for each model. This is <code>makeBarPlots</code> which plots bar plots comparing each model across each of the evaluation measures. This function takes the following argument: </p>
+<p>The evaluation measures data frame can be used to assess the performance of each of the algorithms. The most convenient way to compare the performance of each is with visualizations. <code>MetaClean</code> provides a simple wrapper function to easily generate bar plot visualizations of the evaluation measures for each model. This is <code>getBarPlots</code> which plots bar plots comparing each model across each of the evaluation measures. This function takes the following argument: </p>
 
 <ul>
-<li><strong>evalMeasuresDF</strong>: dataframe with the following columns: Model, RepNum, PosClass.FScore, PosClass.Recall, PosClass.Precision, NegClass.FScore, NegClass.Recall, NegClass.Precision, and Accuracy. The rows of the dataframe will correspond to the results of a particular model and a particular round of cross-validation.</li>
-<li><strong>emNames</strong>: list of names of the evaluation measures to visualize. Accepts the following: PosClass.FScore, PosClass.Recall, PosClass.Precision, NegClass.FScore, NegClass.Recall, NegClass.Precision, and Accuracy. Default is &ldquo;All&rdquo;.</li>
+<li><strong>evalMeasuresDF</strong>: dataframe with the following columns: Model, RepNum, Pass_FScore, Pass_Recall, Pass_Precision, Fail_FScore, Fail_Recall, Fail_Precision, and Accuracy. The rows of the dataframe will correspond to the results of a particular model and a particular round of cross-validation.</li>
+<li><strong>emNames</strong>: list of names of the evaluation measures to visualize. Accepts the following: Pass_FScore, Pass_Recall, Pass_Precision, Fail_FScore, Fail_Recall, Fail_Precision, and Accuracy. Default is &ldquo;All&rdquo;.</li>
 </ul>
 
 <p>NOTE: When &ldquo;All&rdquo; is selected for emNames, the bar plots are returned in the same order as the names listed in the description.</p>
 
 <pre><code class="r"># generate bar plots for every
-#barPlots &lt;- makeBarPlots(evalMeasuresDF, emNames=&quot;All&quot;)
-
-#plot(barPlots[[1]]) # PASS.FScore
-#plot(barPlots[[4]]) # FAIL.FScore
-#plot(barPlots[[7]]) # Accuracy
+# barPlots &lt;- getBarPlots(evalMeasuresDF, emNames=&quot;All&quot;)
+# 
+# plot(barPlots$M11$Pass_FScore) # Pass_FScore
+# plot(barPlots$M11$Fail_FScore) # Fail_FScore
+# plot(barPlots$M11$Accuracy) # Accuracy
 </code></pre>
 
 <p>These plots can help the user select the best perfomring classifier for the data. Of course, the user can also employ their own statistical tests on the evalMeasuresDF itself to determine which class</p>
 
 <h3>Train Final Classifier</h3>
 
-<p>Once the best perfomring model has been selected, the user can train the algorithm using all of the available training data and the optimized hyperparameters for the algorithm determined by training, to create the final classifier. </p>
+<p>Once the best perfomring model has been selected, the user can train the algorithm using all of the available training data and the optimized hyperparameters for the algorithm determined by training, to create the final classifier. The hyperparamters can be found in the &ldquo;pred&rdquo; data frame returned with the model by <code>runCrossValidation</code>. The user must provide the hyperparamters as a data frame with the hyperparameter names as columns, as shown below.</p>
 
-<pre><code class="r"># best performing model for example development set, rand.seed = 453, k = 5, repNum = 10 is AdaBoost
+<pre><code class="r"># example of optimized hyperparameters for best performing model AdaBoost M11
+# hyperparameters here are nIter = 150 and method = &quot;Adaboost.M1&quot;
+# View(models$AdaBoost_M11$pred)
 
-#trainData &lt;- pqMetrics_development[,-c(1)]
-#trControl &lt;- trainControl(method = &quot;none&quot;, savePredictions = &#39;final&#39;, classProbs=TRUE)
+# best performing model for example development set, rand.seed = 453, k = 5, repNum = 10 is AdaBoost
 
-#seed &lt;- 453
-##set.seed(seed)
-#best_model &lt;- train(Class~., trainData,
-#                   method=&quot;adaboost&quot;,
-#                   trControl=trControl,
-#                   tuneGrid=data.frame(nIter=150, method=&quot;Adaboost.M1&quot;) # list hyperparameters optimized for the algorithm
-#                   )
-</code></pre>
-
-<h3>Make Predictions</h3>
-
-<p>The user can make predictions on new data using the final classifier using the predict() function from <code>caret</code> as demonstrated below:</p>
-
-<pre><code class="r"># return prediction probabilities for test dataset
-#test_predictions_prob &lt;- predict(best_model, pqMetrics_test[,-c(1)], type=&quot;prob&quot;)
-# return class predictions for test dataset
-#test_predictions_class &lt;- predict(best_model, pqMetrics_test[,-c(1)])
-
-
-#test_predictions &lt;- cbind(&quot;Probabilities&quot;=test_predictions_prob, &quot;Class&quot;=test_predictions_class, &quot;EICNO&quot;=pqMetrics_test$EICNo)
-
-#test_evalMeasures &lt;- calculateEvaluationMeasures(pred=test_predictions_class, pqMetrics_test$Class)
+# hyperparameters &lt;- models$AdaBoost_M11$pred[,c(&quot;nIter&quot;, &quot;method&quot;)]
+# hyperparameters &lt;- unique(hyperparameters)
+# 
+# metaclean_model &lt;- trainClassifier(trainData = pqm_development,
+#                                    model = &quot;AdaBoost&quot;,
+#                                    metricSet = &quot;M11&quot;,
+#                                    hyperparameters = hyperparameters)
 </code></pre>
 
 <h3>Save Model</h3>
 
-<p>This classifier can then be saved to a directory specified by the user so it can used as many times as desired.</p>
+<p>This classifier can then be saved to a directory specified by the user so it can used as many times as desired. </p>
 
 <pre><code class="r"># uncomment the lines below and add path where you want to save trained model
-# model_path &lt;- &quot;&quot;
-# model_file &lt;- paste0(model_path, &quot;MyModel.rds&quot;)
-# saveRDS(best_model, file=model_file)
+# model_file &lt;- &quot;&quot;
+# saveRDS(metaclean_model, file=model_file)
 </code></pre>
 
 <h2>Part 2: Using Existing Models to Make Predictions</h2>
@@ -454,7 +491,7 @@ data(&quot;pqMetrics_test&quot;)
 <pre><code class="r">## UNCOMMENT THIS CODE IF YOU HAVE INSTALLED MetaCleanData
 
 # # load model from MetaCleanData 
-# data(myModel)
+# data(example_model)
 </code></pre>
 
 <h3>Make Predictions</h3>
@@ -463,11 +500,9 @@ data(&quot;pqMetrics_test&quot;)
 
 <pre><code class="r">## UNCOMMENT THIS CODE IF YOU HAVE INSTALLED MetaCleanData
 
-# myModel_predictions_prob &lt;- predict(myModel, pqMetrics_test[,-c(1)], type=&quot;prob&quot;)
-# myModel_predictions_class &lt;- predict(myModel, pqMetrics_test[,-c(1)])
-# 
-# myModel_predictions &lt;- cbind(&quot;Probabilities&quot;=myModel_predictions_prob, &quot;Class&quot;=myModel_predictions_class, &quot;EICNO&quot;=pqMetrics_test$EICNo)
-# 
+# mc_predictions &lt;- getPredicitons(model = example_model,
+#                                  testData = pqm_test,
+#                                  eicColumn = &quot;EICNo&quot;)
 </code></pre>
 
 </body>
